@@ -55,6 +55,7 @@ def cut_sentence(sentence):
     return filtered_words_list
 
 def build_doc2vec_model():
+    '''构建doc2vec的模型，保存'''
     document = []
     i = 0
     for line in codecs.open(data_path,"r").readlines():
@@ -72,25 +73,36 @@ def build_doc2vec_model():
 
 
 def load_model():
+    '''加载模型,返回doc2vec的model'''
     doc2vec_model_path = os.path.join(abs_path,"doc2vec_model/model.doc2vec")
     doc2vec_model = Doc2Vec.load(doc2vec_model_path)
     return doc2vec_model
 
 def doc_similarity(model,text1,text2):
+    '''
+    计算text1和text2在model下的相似度
+    model:doc2vec的model
+    text2，text1：需要计算相似性的文本
+    '''
     vec1 = model.infer_vector(cut_sentence(text1))
     vec2 = model.infer_vector(cut_sentence(text2))
-    
     # _similarity = 0
     # if vec1 !=0 and vec2 !=0:
     _similarity = (vec1.dot(vec2))/(np.sqrt(vec1.dot(vec1))*np.sqrt(vec1.dot(vec2)))
     return _similarity
 
 def doc_infer_vector(model,text):
+    '''
+    获取doc的向量值，100列
+    '''
     infer_words = cut_sentence(text)
     vec = model.infer_vector(infer_words)
     return vec
 
 def _usage1_infer_vector(text):
+    '''
+    用例：获取doc的vector
+    '''
     model = load_model()
     infer_words = cut_sentence(text)
     vec = model.infer_vector(infer_words)
@@ -98,6 +110,9 @@ def _usage1_infer_vector(text):
     return vec
 
 def _usage2_find_exist_most_similar_sentence(text):
+    '''
+    用例：计算text和构建model的文章中，最相似的前10个文档
+    '''
     model = load_model()
     infer_words = cut_sentence(text)
     infer_vector = model.infer_vector(infer_words)
